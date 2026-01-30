@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fluxo MRR x Churn — Setup + Integração</title>
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f1a2e;
+      --text:#eaf0ff;
+      --muted:#a9b6d3;
+      --accent:#00a3ff;
+      --border:rgba(255,255,255,.08);
+      --code:#0a1020;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:linear-gradient(180deg, var(--bg), #070b14);
+      color:var(--text);
+    }
+    a{color:inherit}
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 18px 64px;
+    }
+    header{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:18px 18px;
+    }
+    header h1{
+      margin:0;
+      font-size:1.35rem;
+      letter-spacing:.2px;
+    }
+    header p{
+      margin:6px 0 0;
+      color:var(--muted);
+      max-width:70ch;
+      line-height:1.35;
+    }
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(0,163,255,.12);
+      text-decoration:none;
+      font-weight:600;
+      white-space:nowrap;
+    }
+    .btn.secondary{
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (min-width: 980px){
+      .grid{
+        grid-template-columns: 280px 1fr;
+        align-items:start;
+      }
+    }
+    nav{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:14px;
+      position:sticky;
+      top:14px;
+    }
+    nav h2{
+      margin:0 0 10px;
+      font-size:.95rem;
+      color:var(--muted);
+      font-weight:700;
+    }
+    nav a{
+      display:block;
+      padding:10px 10px;
+      margin:6px 0;
+      border-radius:12px;
+      text-decoration:none;
+      border:1px solid transparent;
+      color:rgba(234,240,255,.92);
+      background:rgba(255,255,255,.02);
+    }
+    nav a:hover{
+      border-color:var(--border);
+      background:rgba(0,163,255,.08);
+    }
+    main{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:18px;
+    }
+    section{
+      padding:6px 0 18px;
+      border-bottom:1px solid var(--border);
+    }
+    section:last-child{border-bottom:none; padding-bottom:0}
+    h3{
+      margin:8px 0 10px;
+      font-size:1.05rem;
+      letter-spacing:.2px;
+    }
+    p, li{
+      color:rgba(234,240,255,.92);
+      line-height:1.45;
+    }
+    .muted{color:var(--muted)}
+    ul{margin:10px 0 0 18px}
+    .card{
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.12);
+      border-radius:14px;
+      padding:12px 12px;
+      margin-top:10px;
+    }
+    code, pre{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    pre{
+      margin:10px 0 0;
+      padding:12px;
+      border-radius:12px;
+      background:var(--code);
+      border:1px solid var(--border);
+      overflow:auto;
+      color:#d6e3ff;
+    }
+    .k{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(0,163,255,.10);
+      color:#cfeaff;
+      font-size:.82rem;
+      font-weight:700;
+    }
+    .ok{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid rgba(0,255,170,.25);
+      background:rgba(0,255,170,.10);
+      color:#bfffe9;
+      font-size:.82rem;
+      font-weight:700;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <header>
+      <div>
+        <h1>Fluxo MRR x Churn — Setup + Integração</h1>
+        <p>
+          Este documento descreve como padronizar o fluxo no <span class="k">GitHub Pages</span>,
+          manter a planilha como <span class="k">sub-link</span> dentro do fluxo
+          e apontar o Hub para o <span class="k">site do fluxo</span> (e não direto para o Sheets).
+        </p>
+      </div>
+
+      <div class="actions">
+        <a class="btn" target="_blank" rel="noopener noreferrer"
+           href="https://docs.google.com/spreadsheets/d/1zSF9r-goPIX8V4VD8-Jojb04wGEOwdlk/edit?gid=925409444#gid=925409444">
+          Abrir planilha — MRR x Churn
+        </a>
+        <a class="btn secondary" target="_blank" rel="noopener noreferrer"
+           href="https://germaninho.github.io/fluxo-mrr-x-churn-cscx-sankhya-abc-paulista/">
+          Abrir site do Fluxo
+        </a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <nav>
+        <h2>Atalhos</h2>
+        <a href="#visao-geral">0) Visão geral</a>
+        <a href="#repo">1) Criar repositório</a>
+        <a href="#pages">2) Ativar GitHub Pages</a>
+        <a href="#index">3) Criar o index.html</a>
+        <a href="#conteudo">4) Conteúdo do fluxo</a>
+        <a href="#hub">5) Atualizar o Hub</a>
+        <a href="#checklist">6) Checklist final</a>
+      </nav>
+
+      <main>
+        <section id="visao-geral">
+          <h3>0) Visão geral (padrão correto)</h3>
+          <p>
+            A planilha (Google Sheets) deve ser um <b>sub-link</b> dentro do seu fluxo (página do Git).
+            O Hub deve apontar para a <b>URL do GitHub Pages do Fluxo</b>.
+          </p>
+          <div class="card">
+            <p class="muted" style="margin:0">
+              ✅ Resultado esperado: <b>Hub → Fluxo (GitHub Pages) → Planilha</b>
+            </p>
+          </div>
+        </section>
+
+        <section id="repo">
+          <h3>1) Criar um novo repositório no GitHub</h3>
+          <ul>
+            <li>GitHub → <b>New repository</b></li>
+            <li>Nome no padrão: <b>fluxo-mrr-x-churn-cscx-sankhya-abc-paulista</b></li>
+            <li>Marcar: <b>Public</b> e <b>Add a README</b></li>
+            <li>Criar repositório</li>
+          </ul>
+        </section>
+
+        <section id="pages">
+          <h3>2) Ativar o GitHub Pages</h3>
+          <ul>
+            <li>Repositório → <b>Settings → Pages</b></li>
+            <li>Build and deployment:</li>
+            <ul>
+              <li>Source: <b>Deploy from a branch</b></li>
+              <li>Branch: <b>main</b></li>
+              <li>Folder: <b>/(root)</b></li>
+            </ul>
+            <li>Salvar e aguardar a URL do Pages aparecer</li>
+          </ul>
+
+          <div class="card">
+            <p style="margin:0">
+              URL padrão do fluxo:
+              <b>https://germaninho.github.io/fluxo-mrr-x-churn-cscx-sankhya-abc-paulista/</b>
+              <span class="ok">OK</span>
+            </p>
+          </div>
+        </section>
+
+        <section id="index">
+          <h3>3) Criar o arquivo do Fluxo (index.html)</h3>
+
+          <p><b>Opção A (mais rápida):</b> pelo próprio GitHub</p>
+          <ul>
+            <li>Repo → <b>Add file → Create new file</b></li>
+            <li>Nome: <b>index.html</b></li>
+            <li>Colar o conteúdo do fluxo</li>
+            <li>Commit</li>
+          </ul>
+
+          <p style="margin-top:12px"><b>Opção B (via Git no PC):</b></p>
+          <pre><code>git clone https://github.com/germaninho/fluxo-mrr-x-churn-cscx-sankhya-abc-paulista.git
+cd fluxo-mrr-x-churn-cscx-sankhya-abc-paulista</code></pre>
+
+          <pre><code>git add .
+git commit -m "Cria Fluxo MRR x Churn"
+git push</code></pre>
+        </section>
+
+        <section id="conteudo">
+          <h3>4) Conteúdo do Fluxo (processo + link do Excel)</h3>
+          <p>Dentro do <b>index.html</b> do fluxo, manter:</p>
+          <ul>
+            <li><b>Título:</b> Fluxo MRR x Churn</li>
+            <li><b>Objetivo</b> do fluxo</li>
+            <li><b>Pré-requisitos</b> (Unidade, período, etc.)</li>
+            <li><b>Passo a passo</b> do processo (itens 1 a 6)</li>
+            <li><b>Link do Google Sheets</b> (como botão)</li>
+            <li>(Opcional) “Validações” e “Erros comuns” (competência/classificação/divergência)</li>
+          </ul>
+
+          <div class="card">
+            <p style="margin:0"><b>Botão recomendado dentro do fluxo:</b></p>
+            <pre><code>&lt;a target="_blank" rel="noopener noreferrer"
+   href="https://docs.google.com/spreadsheets/d/1zSF9r-goPIX8V4VD8-Jojb04wGEOwdlk/edit?gid=925409444#gid=925409444"&gt;
+  Abrir planilha — MRR x Churn
+&lt;/a&gt;</code></pre>
+          </div>
+        </section>
+
+        <section id="hub">
+          <h3>5) Atualizar o Hub (apontar para o Fluxo, e não direto pra planilha)</h3>
+          <p>
+            No Hub, o item do menu deve apontar para o <b>GitHub Pages do Fluxo</b>.
+            A planilha fica <b>dentro</b> do fluxo como sub-link.
+          </p>
+
+          <div class="card">
+            <p style="margin:0"><b>Snippet para colar no Hub:</b></p>
+            <pre><code>&lt;!-- ✅ NOVA ABA: Fluxo MRR x Churn --&gt;
+&lt;li&gt;
+  &lt;a class="nav-link"
+     href="https://germaninho.github.io/fluxo-mrr-x-churn-cscx-sankhya-abc-paulista/"&gt;
+    &lt;i class="ion-arrow-graph-up-right"&gt;&lt;/i&gt;
+    &lt;span class="nav-text"&gt;Fluxo MRR x Churn&lt;/span&gt;
+  &lt;/a&gt;
+&lt;/li&gt;</code></pre>
+          </div>
+        </section>
+
+        <section id="checklist">
+          <h3>6) Checklist final (100% correto)</h3>
+          <ul>
+            <li><span class="ok">OK</span> Repositório criado com nome padrão</li>
+            <li><span class="ok">OK</span> Pages habilitado (main / root)</li>
+            <li><span class="ok">OK</span> index.html publicado</li>
+            <li>Fluxo contém:</li>
+            <ul>
+              <li>Passo a passo (1 a 6)</li>
+              <li>Link do Sheets</li>
+              <li>Regras de conferência (Dez–Nov etc.)</li>
+            </ul>
+            <li>Hub aponta para o GitHub Pages do Fluxo</li>
+            <li>Teste: <b>Hub → Fluxo → Planilha</b></li>
+          </ul>
+        </section>
+
+      </main>
+    </div>
+  </div>
+</body>
+</html>
