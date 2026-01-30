@@ -3,343 +3,479 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Fluxo MRR x Churn — Setup + Integração</title>
+  <title>Fluxo MRR x Churn — CS/CX — Sankhya ABC Paulista</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300;700&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg:#0b1220;
-      --card:#0f1a2e;
-      --text:#eaf0ff;
-      --muted:#a9b6d3;
-      --accent:#00a3ff;
-      --border:rgba(255,255,255,.08);
-      --code:#0a1020;
+      --bg:#f5f3e7;
+      --text:#443c3d;
+
+      --modal-bg:#ffffff;
+      --overlay:rgba(0,0,0,.45);
+
+      --btn-bg:#0f172a0f;
+      --btn-border:#cbd5e1;
+      --btn-hover:#0f172a14;
+      --btn-text:#0f172a;
     }
-    *{box-sizing:border-box}
+
     body{
       margin:0;
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      background:linear-gradient(180deg, var(--bg), #070b14);
+      background:var(--bg);
       color:var(--text);
+      font-family:"Open Sans Condensed",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
     }
-    a{color:inherit}
-    .wrap{
-      max-width:1100px;
-      margin:0 auto;
-      padding:28px 18px 64px;
+
+    .wrapper{ padding:50px 100px; }
+    .svg-container{ position:relative; width:100%; padding-bottom:55%; overflow:hidden; background:var(--bg); }
+    .svg-content{ position:absolute; inset:0; }
+
+    .node{ cursor:pointer; outline:none; }
+    .node:focus-visible rect{ filter: drop-shadow(0 0 0.5rem rgba(0,0,0,.25)); }
+
+    .node-label{
+      font-weight:900;
+      fill:#f5f3e7;
+      text-transform:uppercase;
+      letter-spacing:.45px;
+      font-size:10px;
+      pointer-events:none;
     }
-    header{
-      display:flex;
-      flex-wrap:wrap;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:18px 18px;
+    .node-label.xs{ font-size:8px; }
+    .node-label.xxs{ font-size:7px; }
+
+    .edge--dotted{
+      stroke:#333;
+      stroke-width:2;
+      stroke-dasharray:2 1;
+      fill:none;
+      stroke-linecap:round;
     }
-    header h1{
-      margin:0;
-      font-size:1.35rem;
-      letter-spacing:.2px;
-    }
-    header p{
-      margin:6px 0 0;
-      color:var(--muted);
-      max-width:70ch;
-      line-height:1.35;
-    }
-    .actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      background:rgba(0,163,255,.12);
-      text-decoration:none;
-      font-weight:600;
-      white-space:nowrap;
-    }
-    .btn.secondary{
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-    }
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:14px;
-      margin-top:14px;
-    }
-    @media (min-width: 980px){
-      .grid{
-        grid-template-columns: 280px 1fr;
-        align-items:start;
-      }
-    }
-    nav{
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:14px;
-      position:sticky;
-      top:14px;
-    }
-    nav h2{
-      margin:0 0 10px;
-      font-size:.95rem;
-      color:var(--muted);
-      font-weight:700;
-    }
-    nav a{
-      display:block;
-      padding:10px 10px;
-      margin:6px 0;
-      border-radius:12px;
-      text-decoration:none;
-      border:1px solid transparent;
-      color:rgba(234,240,255,.92);
-      background:rgba(255,255,255,.02);
-    }
-    nav a:hover{
-      border-color:var(--border);
-      background:rgba(0,163,255,.08);
-    }
-    main{
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
-      border-radius:16px;
+
+    /* Modal */
+    .modal{
+      position:fixed; inset:0;
+      display:none; align-items:center; justify-content:center;
+      background:var(--overlay);
+      z-index:999;
       padding:18px;
     }
-    section{
-      padding:6px 0 18px;
-      border-bottom:1px solid var(--border);
-    }
-    section:last-child{border-bottom:none; padding-bottom:0}
-    h3{
-      margin:8px 0 10px;
-      font-size:1.05rem;
-      letter-spacing:.2px;
-    }
-    p, li{
-      color:rgba(234,240,255,.92);
-      line-height:1.45;
-    }
-    .muted{color:var(--muted)}
-    ul{margin:10px 0 0 18px}
-    .card{
-      border:1px solid var(--border);
-      background:rgba(0,0,0,.12);
-      border-radius:14px;
-      padding:12px 12px;
-      margin-top:10px;
-    }
-    code, pre{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    }
-    pre{
-      margin:10px 0 0;
-      padding:12px;
-      border-radius:12px;
-      background:var(--code);
-      border:1px solid var(--border);
+    .modal.open{ display:flex; }
+    .modal__panel{
+      background:var(--modal-bg);
+      color:var(--text);
+      width:min(92vw,760px);
+      border-radius:16px;
+      box-shadow:0 10px 40px rgba(0,0,0,.25);
+      padding:20px 20px 16px;
+      border:1px solid #e2e8f0;
+      max-height:86vh;
       overflow:auto;
-      color:#d6e3ff;
     }
-    .k{
+    .modal__header{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      margin-bottom:8px;
+    }
+    .modal__title{
+      margin:0;
+      font-size:20px;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+    }
+    .modal__close{
+      appearance:none;
+      border:0;
+      background:transparent;
+      font-size:20px;
+      line-height:1;
+      padding:6px 10px;
+      border-radius:8px;
+      cursor:pointer;
+      color:var(--btn-text);
+    }
+    .modal__close:hover{ background:#0001; }
+    .modal__body{ padding:8px 2px 0; }
+    .modal__body h3{ margin:12px 0 6px; font-size:16px; }
+    .modal__body ul, .modal__body ol{ margin:8px 0 8px 18px; }
+    .modal__body p{ margin:8px 0; }
+
+    .modal__actions{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:12px;
+    }
+    .btn{
       display:inline-block;
-      padding:2px 8px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background:rgba(0,163,255,.10);
-      color:#cfeaff;
-      font-size:.82rem;
+      text-decoration:none;
+      text-align:center;
+      padding:12px 16px;
+      border-radius:12px;
+      border:1px solid var(--btn-border);
+      background:var(--btn-bg);
+      color:var(--btn-text);
       font-weight:700;
+      letter-spacing:.6px;
+      text-transform:uppercase;
+      transition: background .2s, box-shadow .2s, transform .06s;
     }
-    .ok{
-      display:inline-block;
-      padding:2px 8px;
-      border-radius:999px;
-      border:1px solid rgba(0,255,170,.25);
-      background:rgba(0,255,170,.10);
-      color:#bfffe9;
-      font-size:.82rem;
-      font-weight:700;
+    .btn:hover,.btn:focus{ background:var(--btn-hover); box-shadow:0 0 0 2px #00000010 inset; }
+    .btn:active{ transform:translateY(1px); }
+
+    .callout{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#0f172a0a;
+      border:1px dashed #94a3b8;
+      font-size:14px;
     }
+
+    code{ background:#00000010; padding:2px 6px; border-radius:8px; }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
+  <div class="wrapper">
+    <div class="svg-container">
+      <svg viewBox="0 0 1000 520" class="svg-content" xmlns="http://www.w3.org/2000/svg">
 
-    <header>
-      <div>
-        <h1>Fluxo MRR x Churn — Setup + Integração</h1>
-        <p>
-          Este documento descreve como padronizar o fluxo no <span class="k">GitHub Pages</span>,
-          manter a planilha como <span class="k">sub-link</span> dentro do fluxo
-          e apontar o Hub para o <span class="k">site do fluxo</span> (e não direto para o Sheets).
-        </p>
-      </div>
+        <!-- INÍCIO -->
+        <g transform="translate(40,60)">
+          <circle cx="55" cy="55" r="48" fill="#000"/>
+          <text x="55" y="55" fill="#fff" font-size="22"
+                text-anchor="middle" dominant-baseline="middle">INÍCIO</text>
+        </g>
 
-      <div class="actions">
-        <a class="btn" target="_blank" rel="noopener noreferrer"
-           href="https://docs.google.com/spreadsheets/d/1zSF9r-goPIX8V4VD8-Jojb04wGEOwdlk/edit?gid=925409444#gid=925409444">
-          Abrir planilha — MRR x Churn
-        </a>
-        <a class="btn secondary" target="_blank" rel="noopener noreferrer"
-           href="https://germaninho.github.io/fluxo-mrr-x-churn-cscx-sankhya-abc-paulista/">
-          Abrir site do Fluxo
-        </a>
-      </div>
-    </header>
+        <!-- INÍCIO -> PASSO 1 -->
+        <line x1="143" y1="115" x2="210" y2="115" class="edge--dotted"/>
 
-    <div class="grid">
-      <nav>
-        <h2>Atalhos</h2>
-        <a href="#visao-geral">0) Visão geral</a>
-        <a href="#repo">1) Criar repositório</a>
-        <a href="#pages">2) Ativar GitHub Pages</a>
-        <a href="#index">3) Criar o index.html</a>
-        <a href="#conteudo">4) Conteúdo do fluxo</a>
-        <a href="#hub">5) Atualizar o Hub</a>
-        <a href="#checklist">6) Checklist final</a>
-      </nav>
+        <!-- PASSO 1 -->
+        <g class="node" id="node-1" tabindex="0" role="button" aria-label="Abrir Passo 1"
+           transform="translate(210,80)">
+          <rect width="200" height="70" rx="8" fill="#66cc00"/>
+          <text class="node-label xxs" x="100" y="22" text-anchor="middle">
+            <tspan x="100">PASSO 1</tspan>
+            <tspan x="100" dy="14">SANKHYA — CS - MRR</tspan>
+            <tspan x="100" dy="14">EVOLUÇÃO DO MRR</tspan>
+            <tspan x="100" dy="14">FILTRAR 2 MESES</tspan>
+          </text>
+        </g>
 
-      <main>
-        <section id="visao-geral">
-          <h3>0) Visão geral (padrão correto)</h3>
-          <p>
-            A planilha (Google Sheets) deve ser um <b>sub-link</b> dentro do seu fluxo (página do Git).
-            O Hub deve apontar para a <b>URL do GitHub Pages do Fluxo</b>.
-          </p>
-          <div class="card">
-            <p class="muted" style="margin:0">
-              ✅ Resultado esperado: <b>Hub → Fluxo (GitHub Pages) → Planilha</b>
-            </p>
-          </div>
-        </section>
+        <!-- PASSO 1 -> PASSO 2 -->
+        <line x1="410" y1="115" x2="480" y2="115" class="edge--dotted"/>
 
-        <section id="repo">
-          <h3>1) Criar um novo repositório no GitHub</h3>
-          <ul>
-            <li>GitHub → <b>New repository</b></li>
-            <li>Nome no padrão: <b>fluxo-mrr-x-churn-cscx-sankhya-abc-paulista</b></li>
-            <li>Marcar: <b>Public</b> e <b>Add a README</b></li>
-            <li>Criar repositório</li>
-          </ul>
-        </section>
+        <!-- PASSO 2 -->
+        <g class="node" id="node-2" tabindex="0" role="button" aria-label="Abrir Passo 2"
+           transform="translate(480,80)">
+          <rect width="200" height="70" rx="8" fill="#66cc00"/>
+          <text class="node-label xxs" x="100" y="22" text-anchor="middle">
+            <tspan x="100">PASSO 2</tspan>
+            <tspan x="100" dy="14">ATUALIZAR EXCEL</tspan>
+            <tspan x="100" dy="14">SALDOS (BASE)</tspan>
+            <tspan x="100" dy="14">NOV x DEZ</tspan>
+          </text>
+        </g>
 
-        <section id="pages">
-          <h3>2) Ativar o GitHub Pages</h3>
-          <ul>
-            <li>Repositório → <b>Settings → Pages</b></li>
-            <li>Build and deployment:</li>
-            <ul>
-              <li>Source: <b>Deploy from a branch</b></li>
-              <li>Branch: <b>main</b></li>
-              <li>Folder: <b>/(root)</b></li>
-            </ul>
-            <li>Salvar e aguardar a URL do Pages aparecer</li>
-          </ul>
+        <!-- PASSO 2 -> PASSO 3 -->
+        <line x1="680" y1="115" x2="750" y2="115" class="edge--dotted"/>
 
-          <div class="card">
-            <p style="margin:0">
-              URL padrão do fluxo:
-              <b>https://germaninho.github.io/fluxo-mrr-x-churn-cscx-sankhya-abc-paulista/</b>
-              <span class="ok">OK</span>
-            </p>
-          </div>
-        </section>
+        <!-- PASSO 3 -->
+        <g class="node" id="node-3" tabindex="0" role="button" aria-label="Abrir Passo 3"
+           transform="translate(750,80)">
+          <rect width="220" height="70" rx="8" fill="#66cc00"/>
+          <text class="node-label xxs" x="110" y="22" text-anchor="middle">
+            <tspan x="110">PASSO 3</tspan>
+            <tspan x="110" dy="14">CONFERIR COLUNA</tspan>
+            <tspan x="110" dy="14">DEZ/2025 NO GRÁFICO</tspan>
+            <tspan x="110" dy="14">GANHO / PERDA</tspan>
+          </text>
+        </g>
 
-        <section id="index">
-          <h3>3) Criar o arquivo do Fluxo (index.html)</h3>
+        <!-- PASSO 3 -> PASSO 4 (desce e volta) -->
+        <line x1="860" y1="150" x2="860" y2="260" class="edge--dotted"/>
+        <line x1="860" y1="260" x2="350" y2="260" class="edge--dotted"/>
+        <line x1="350" y1="260" x2="350" y2="290" class="edge--dotted"/>
 
-          <p><b>Opção A (mais rápida):</b> pelo próprio GitHub</p>
-          <ul>
-            <li>Repo → <b>Add file → Create new file</b></li>
-            <li>Nome: <b>index.html</b></li>
-            <li>Colar o conteúdo do fluxo</li>
-            <li>Commit</li>
-          </ul>
+        <!-- PASSO 4 -->
+        <g class="node" id="node-4" tabindex="0" role="button" aria-label="Abrir Passo 4"
+           transform="translate(210,290)">
+          <rect width="260" height="70" rx="8" fill="#66cc00"/>
+          <text class="node-label xxs" x="130" y="22" text-anchor="middle">
+            <tspan x="130">PASSO 4</tspan>
+            <tspan x="130" dy="14">MUDAR PARA DEZ</tspan>
+            <tspan x="130" dy="14">FILTRAR 1 MÊS</tspan>
+            <tspan x="130" dy="14">AUDITAR O MÊS</tspan>
+          </text>
+        </g>
 
-          <p style="margin-top:12px"><b>Opção B (via Git no PC):</b></p>
-          <pre><code>git clone https://github.com/germaninho/fluxo-mrr-x-churn-cscx-sankhya-abc-paulista.git
-cd fluxo-mrr-x-churn-cscx-sankhya-abc-paulista</code></pre>
+        <!-- PASSO 4 -> PASSO 5 -->
+        <line x1="470" y1="325" x2="520" y2="325" class="edge--dotted"/>
 
-          <pre><code>git add .
-git commit -m "Cria Fluxo MRR x Churn"
-git push</code></pre>
-        </section>
+        <!-- PASSO 5 -->
+        <g class="node" id="node-5" tabindex="0" role="button" aria-label="Abrir Passo 5"
+           transform="translate(520,290)">
+          <rect width="220" height="70" rx="8" fill="#66cc00"/>
+          <text class="node-label xxs" x="110" y="22" text-anchor="middle">
+            <tspan x="110">PASSO 5</tspan>
+            <tspan x="110" dy="14">EXPANDIR PERDAS</tspan>
+            <tspan x="110" dy="14">TABELA PERDAS REAIS</tspan>
+            <tspan x="110" dy="14">PARA O EXCEL</tspan>
+          </text>
+        </g>
 
-        <section id="conteudo">
-          <h3>4) Conteúdo do Fluxo (processo + link do Excel)</h3>
-          <p>Dentro do <b>index.html</b> do fluxo, manter:</p>
-          <ul>
-            <li><b>Título:</b> Fluxo MRR x Churn</li>
-            <li><b>Objetivo</b> do fluxo</li>
-            <li><b>Pré-requisitos</b> (Unidade, período, etc.)</li>
-            <li><b>Passo a passo</b> do processo (itens 1 a 6)</li>
-            <li><b>Link do Google Sheets</b> (como botão)</li>
-            <li>(Opcional) “Validações” e “Erros comuns” (competência/classificação/divergência)</li>
-          </ul>
+        <!-- PASSO 5 -> PASSO 6 -->
+        <line x1="740" y1="325" x2="790" y2="325" class="edge--dotted"/>
 
-          <div class="card">
-            <p style="margin:0"><b>Botão recomendado dentro do fluxo:</b></p>
-            <pre><code>&lt;a target="_blank" rel="noopener noreferrer"
-   href="https://docs.google.com/spreadsheets/d/1zSF9r-goPIX8V4VD8-Jojb04wGEOwdlk/edit?gid=925409444#gid=925409444"&gt;
-  Abrir planilha — MRR x Churn
-&lt;/a&gt;</code></pre>
-          </div>
-        </section>
+        <!-- PASSO 6 -->
+        <g class="node" id="node-6" tabindex="0" role="button" aria-label="Abrir Passo 6"
+           transform="translate(790,290)">
+          <rect width="220" height="70" rx="8" fill="#66cc00"/>
+          <text class="node-label xxs" x="110" y="22" text-anchor="middle">
+            <tspan x="110">PASSO 6</tspan>
+            <tspan x="110" dy="14">EXPANDIR GANHOS</tspan>
+            <tspan x="110" dy="14">TABELA GANHOS REAIS</tspan>
+            <tspan x="110" dy="14">PARA O EXCEL</tspan>
+          </text>
+        </g>
 
-        <section id="hub">
-          <h3>5) Atualizar o Hub (apontar para o Fluxo, e não direto pra planilha)</h3>
-          <p>
-            No Hub, o item do menu deve apontar para o <b>GitHub Pages do Fluxo</b>.
-            A planilha fica <b>dentro</b> do fluxo como sub-link.
-          </p>
+        <!-- PASSO 6 -> FIM -->
+        <line x1="900" y1="360" x2="900" y2="420" class="edge--dotted"/>
 
-          <div class="card">
-            <p style="margin:0"><b>Snippet para colar no Hub:</b></p>
-            <pre><code>&lt;!-- ✅ NOVA ABA: Fluxo MRR x Churn --&gt;
-&lt;li&gt;
-  &lt;a class="nav-link"
-     href="https://germaninho.github.io/fluxo-mrr-x-churn-cscx-sankhya-abc-paulista/"&gt;
-    &lt;i class="ion-arrow-graph-up-right"&gt;&lt;/i&gt;
-    &lt;span class="nav-text"&gt;Fluxo MRR x Churn&lt;/span&gt;
-  &lt;/a&gt;
-&lt;/li&gt;</code></pre>
-          </div>
-        </section>
-
-        <section id="checklist">
-          <h3>6) Checklist final (100% correto)</h3>
-          <ul>
-            <li><span class="ok">OK</span> Repositório criado com nome padrão</li>
-            <li><span class="ok">OK</span> Pages habilitado (main / root)</li>
-            <li><span class="ok">OK</span> index.html publicado</li>
-            <li>Fluxo contém:</li>
-            <ul>
-              <li>Passo a passo (1 a 6)</li>
-              <li>Link do Sheets</li>
-              <li>Regras de conferência (Dez–Nov etc.)</li>
-            </ul>
-            <li>Hub aponta para o GitHub Pages do Fluxo</li>
-            <li>Teste: <b>Hub → Fluxo → Planilha</b></li>
-          </ul>
-        </section>
-
-      </main>
+        <!-- FIM -->
+        <g transform="translate(845,410)">
+          <circle cx="55" cy="55" r="48" fill="#000"/>
+          <text x="55" y="55" fill="#fff" font-size="22"
+                text-anchor="middle" dominant-baseline="middle">FIM</text>
+        </g>
+      </svg>
     </div>
   </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal__panel" role="document">
+      <div class="modal__header">
+        <h2 class="modal__title" id="modal-title">Etapa</h2>
+        <button class="modal__close" type="button" id="modal-close" aria-label="Fechar">✕</button>
+      </div>
+      <div class="modal__body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Templates -->
+
+  <!-- PASSO 1 -->
+  <template id="tpl-1">
+    <p><strong>Onde:</strong> Sankhya Matriz — <em>CS - MRR</em></p>
+    <p><strong>Objetivo:</strong> abrir o gráfico <strong>Evolução do MRR</strong> e filtrar <strong>sempre 2 meses</strong> para comparar base e variação.</p>
+
+    <h3>Filtro (regra do processo)</h3>
+    <p><strong>Quando estiver em Janeiro</strong>, o padrão é analisar <strong>Novembro e Dezembro</strong> (últimos 2 meses).</p>
+
+    <h3>Como filtrar (exemplo)</h3>
+    <ul>
+      <li><strong>Data inicial:</strong> 01/11/2025</li>
+      <li><strong>Data final:</strong> 31/12/2025</li>
+      <li><strong>Unidade:</strong> <strong>83 — BP ABC PAULISTA</strong></li>
+      <li>Demais filtros em branco (Parceiro / CS Matriz / GR / Consultor CS / Segmento / Classificação)</li>
+      <li>Clicar em <strong>Atualizar</strong></li>
+    </ul>
+
+    <div class="callout">
+      <strong>Regra:</strong> sempre trabalhar com <strong>2 meses</strong> no gráfico (comparativo). Depois, você muda para <strong>1 mês</strong> apenas para detalhar perdas/ganhos.
+    </div>
+  </template>
+
+  <!-- PASSO 2 -->
+  <template id="tpl-2">
+    <p><strong>Onde:</strong> Topo do dashboard (após atualizar) + Excel/Planilha</p>
+
+    <h3>O que lançar no Excel (saldos/base)</h3>
+    <p>Com o filtro de <strong>2 meses</strong>, copie do topo:</p>
+    <ul>
+      <li><strong>Valor da Carteira — Nov/25</strong></li>
+      <li><strong>Valor da Carteira — Dez/25</strong></li>
+      <li><strong>Valor agregado / Valor perdido</strong></li>
+      <li><strong>Crescimento</strong></li>
+    </ul>
+
+    <div class="callout">
+      <strong>Exemplo (print):</strong><br/>
+      Nov/25: <strong>R$ 538.812,22</strong> • Dez/25: <strong>R$ 538.009,38</strong><br/>
+      Agregado/Perdido: <strong>-R$ 802,84</strong> • Crescimento: <strong>-0,15%</strong><br/><br/>
+      <strong>Conferência rápida:</strong> <code>Dez - Nov</code> = <code>-802,84</code> (tem que bater com o topo).
+    </div>
+
+    <div class="modal__actions">
+      <a class="btn" target="_blank" rel="noopener noreferrer"
+         href="https://docs.google.com/spreadsheets/d/1zSF9r-goPIX8V4VD8-Jojb04wGEOwdlk/edit?gid=925409444#gid=925409444">
+        Abrir planilha — MRR x Churn
+      </a>
+    </div>
+  </template>
+
+  <!-- PASSO 3 -->
+  <template id="tpl-3">
+    <p><strong>Onde:</strong> Sankhya — <em>CS - MRR</em> → <strong>Gráfico Evolução do MRR</strong></p>
+
+    <h3>Regra do processo</h3>
+    <p>Com o filtro de <strong>2 meses</strong> aplicado, você deve <strong>conferir no próprio gráfico</strong> se os valores batem com o Excel.</p>
+
+    <h3>O que fazer (Dezembro como exemplo)</h3>
+    <ol>
+      <li>Localize a <strong>coluna de Dez/2025</strong> no gráfico.</li>
+      <li><strong>Clique</strong> (ou passe o mouse) na coluna para ver o valor exibido.</li>
+      <li>Compare com o <strong>saldo/base de Dezembro</strong> no Excel.</li>
+      <li>Compare também o <strong>Agregado/Perdido</strong> do topo com a diferença <code>Dez - Nov</code> que você lançou no Excel.</li>
+    </ol>
+
+    <div class="callout">
+      <strong>Dica:</strong> se você controla a <strong>quantidade de clientes</strong> no Excel, use como check adicional (no print aparece <strong>56</strong>).
+    </div>
+  </template>
+
+  <!-- PASSO 4 -->
+  <template id="tpl-4">
+    <p><strong>Onde:</strong> Sankhya — <em>CS - MRR</em></p>
+
+    <h3>Objetivo</h3>
+    <p>Agora vamos <strong>auditar apenas Dezembro</strong> para detalhar <strong>perdas</strong> e <strong>ganhos</strong> e levar as tabelas para o Excel.</p>
+
+    <h3>Ajuste o filtro (1 mês)</h3>
+    <ul>
+      <li><strong>Data inicial:</strong> 01/12/2025</li>
+      <li><strong>Data final:</strong> 31/12/2025</li>
+      <li><strong>Unidade:</strong> <strong>83 — BP ABC PAULISTA</strong></li>
+      <li>Demais filtros em branco</li>
+      <li>Clicar em <strong>Atualizar</strong></li>
+    </ul>
+
+    <div class="callout">
+      <strong>Regra:</strong> 2 meses = comparação de base e variação. <br/>
+      1 mês = detalhamento (tabelas de perdas/ganhos) para alimentar o Excel.
+    </div>
+  </template>
+
+  <!-- PASSO 5 -->
+  <template id="tpl-5">
+    <p><strong>Onde:</strong> Sankhya — <em>CS - MRR</em> → bloco/aba <strong>CS - Perdas MRR</strong></p>
+
+    <h3>Objetivo</h3>
+    <p>Expandir as perdas do mês (Dez/2025) e levar a grade para o Excel.</p>
+
+    <h3>Como fazer</h3>
+    <ol>
+      <li>Com o filtro de <strong>Dezembro</strong> aplicado, vá para <strong>CS - Perdas MRR</strong>.</li>
+      <li>Clique em <strong>Tabela de perdas reais</strong>.</li>
+      <li>Copie/extraia a informação da tabela e cole no Excel.</li>
+    </ol>
+
+    <div class="callout">
+      <strong>O que vai para o Excel:</strong> tudo que estiver na <strong>Tabela de perdas reais</strong> (detalhamento por ocorrência).
+    </div>
+  </template>
+
+  <!-- PASSO 6 -->
+  <template id="tpl-6">
+    <p><strong>Onde:</strong> Sankhya — <em>CS - MRR</em> → bloco/aba <strong>CS - Ganhos MRR</strong></p>
+
+    <h3>Objetivo</h3>
+    <p>Expandir os ganhos do mês (Dez/2025) e levar a grade para o Excel.</p>
+
+    <h3>Como fazer</h3>
+    <ol>
+      <li>Com o filtro de <strong>Dezembro</strong> aplicado, vá para <strong>CS - Ganhos MRR</strong>.</li>
+      <li>Clique em <strong>Tabela ganhos reais</strong>.</li>
+      <li>Copie/extraia a informação da tabela e cole no Excel.</li>
+    </ol>
+
+    <div class="callout">
+      <strong>Fechamento do processo (check):</strong><br/>
+      Depois de colar as tabelas, você consegue comparar <strong>Ganhos</strong> e <strong>Perdas</strong> do mês com a variação do comparativo (<code>Dez - Nov</code>) que você atualizou no Excel.
+    </div>
+
+    <div class="modal__actions">
+      <a class="btn" target="_blank" rel="noopener noreferrer"
+         href="https://docs.google.com/spreadsheets/d/1zSF9r-goPIX8V4VD8-Jojb04wGEOwdlk/edit?gid=925409444#gid=925409444">
+        Abrir planilha — MRR x Churn
+      </a>
+    </div>
+  </template>
+
+  <script>
+    (function(){
+      const modal = document.getElementById('modal');
+      const modalTitle = document.getElementById('modal-title');
+      const modalBody = document.getElementById('modal-body');
+      const btnClose = document.getElementById('modal-close');
+
+      const nodes = [
+        { id:'node-1', title:'Passo 1 — Sankhya (CS - MRR) — Evolução do MRR (2 meses)', tpl:'tpl-1' },
+        { id:'node-2', title:'Passo 2 — Atualizar Excel (saldos/base Nov x Dez)', tpl:'tpl-2' },
+        { id:'node-3', title:'Passo 3 — Conferir coluna do mês (Dez/2025) e ganho/perda', tpl:'tpl-3' },
+        { id:'node-4', title:'Passo 4 — Mudar filtro para Dezembro (1 mês) e atualizar', tpl:'tpl-4' },
+        { id:'node-5', title:'Passo 5 — Expandir Perdas (Tabela de perdas reais → Excel)', tpl:'tpl-5' },
+        { id:'node-6', title:'Passo 6 — Expandir Ganhos (Tabela ganhos reais → Excel)', tpl:'tpl-6' },
+      ];
+
+      let lastTrigger = null;
+
+      function openModal(title, templateId, triggerEl){
+        const tpl = document.getElementById(templateId);
+        if (!tpl) return;
+
+        lastTrigger = triggerEl || null;
+        modalTitle.textContent = title;
+        modalBody.innerHTML = tpl.innerHTML;
+
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden','false');
+
+        document.documentElement.style.overflow='hidden';
+        document.body.style.overflow='hidden';
+      }
+
+      function closeModal(){
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden','true');
+        modalBody.innerHTML = '';
+
+        document.documentElement.style.overflow='';
+        document.body.style.overflow='';
+
+        if (lastTrigger && lastTrigger.focus) lastTrigger.focus();
+      }
+
+      nodes.forEach(n=>{
+        const el = document.getElementById(n.id);
+        if (!el) return;
+
+        el.addEventListener('click', ()=>openModal(n.title, n.tpl, el));
+        el.addEventListener('keydown', (e)=>{
+          if (e.key==='Enter' || e.key===' '){
+            e.preventDefault();
+            openModal(n.title, n.tpl, el);
+          }
+        });
+      });
+
+      btnClose.addEventListener('click', closeModal);
+      modal.addEventListener('click', (e)=>{ if (e.target === modal) closeModal(); });
+
+      document.addEventListener('keydown', (e)=>{
+        if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+      });
+
+      document.addEventListener('click', (e)=>{
+        const a = e.target.closest('a.btn');
+        if (a && modal.classList.contains('open')) {
+          setTimeout(closeModal, 50);
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
