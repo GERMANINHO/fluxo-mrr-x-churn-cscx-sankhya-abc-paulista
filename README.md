@@ -1,126 +1,91 @@
-Perfeito — o que falta agora é **transformar o “processo” em um Fluxo (página própria no GitHub Pages)**, igual você já fez com AE/NPS/Case. A planilha (Excel/Sheets) fica como **sub-link** dentro do Fluxo, e o Hub aponta para o **site do fluxo** (não direto pra planilha). Assim fica 100% correto e padronizado.
+# Fluxo MRR x Churn — CS/CX — Sankhya ABC Paulista (fluxo-mrr-x-churn-cscx-sankhya-abc-paulista)
 
-Abaixo vai o **passo a passo completo** pra criar o novo Git + GitHub Pages + adicionar o processo + adicionar o link da planilha + atualizar o Hub.
+**Versão:** 1.0  
+**Atualizado em:** 10/02/2026  
+**Objetivo:** padronizar a apuração mensal (carteira, variação, ganhos e perdas) do **MRR x Churn** usando o dashboard **CS - MRR** (Sankhya) + planilha de consolidação.
 
----
-
-# 1) Criar um novo repositório no GitHub (padrão dos seus fluxos)
-
-1. Entre no GitHub → **New repository**
-2. Nomeie com o padrão que você já usa, por exemplo:
-
-   * `fluxo-mrr-x-churn-cscx-sankhya-abc-paulista`
-3. Marque:
-
-   * ✅ Public
-   * ✅ Add a README
-4. Create repository
+> Este repositório disponibiliza o fluxo em **HTML/CSS/JS puro** (estático), ideal para publicação via **GitHub Pages**.
 
 ---
 
-# 2) Ativar o GitHub Pages
-
-1. No repositório novo, vá em **Settings → Pages**
-2. Em **Build and deployment**:
-
-   * Source: **Deploy from a branch**
-   * Branch: **main**
-   * Folder: **/(root)**
-3. Salve.
-4. O GitHub vai te entregar a URL (vai ficar nesse padrão):
-
-   * `https://germaninho.github.io/fluxo-mrr-x-churn-cscx-sankhya-abc-paulista/`
+## ✅ Quando usar
+- Fechamento/validação mensal do **MRR** e entendimento de variação de carteira.
+- Conferência do comparativo (2 meses) e detalhamento (1 mês) para alimentar planilha.
+- Auditoria rápida de consistência: **Ganhos – Perdas** vs **variação do mês**.
 
 ---
 
-# 3) Criar o arquivo do Fluxo (index.html)
+## ⚡ Fatos rápidos (regras do processo)
+- **Sempre começar com 2 meses** no filtro para obter o comparativo (base + variação).
+- **Depois mudar para 1 mês** para detalhar e extrair as tabelas de **perdas** e **ganhos**.
+- **Janeiro (regra prática):** analisar **Novembro + Dezembro** (últimos 2 meses).
+- **Unidade padrão:** **83 — BP ABC PAULISTA** (ajuste se necessário).
+- Conferência essencial: **(Mês atual - mês anterior)** precisa bater com o topo **Agregado/Perdido**.
 
-Você pode fazer de 2 formas:
+---
 
-## Opção A (mais rápida): pelo próprio GitHub
+## 🔗 Planilha de apoio
+- **Abrir planilha — MRR x Churn:** (link dentro do fluxo / botão no site)
 
-1. No repo → **Add file → Create new file**
-2. Nome: `index.html`
-3. Cole o HTML do fluxo (o conteúdo do processo)
-4. Commit.
+> Observação: o Hub deve apontar para o **GitHub Pages deste fluxo**; a planilha fica como link interno no fluxo.
 
-## Opção B (padrão dev): via Git no PC
+---
 
-1. Abra um terminal na pasta que você usa pros fluxos
-2. Rode:
+## 🧭 Passo a passo (resumo do fluxo)
+> O `index.html` do repositório traz o fluxo completo em 6 passos, com exemplos e check de conferência.
 
+### 1) Ajustar filtro (2 meses)
+- Defina **data inicial / final** do período de 2 meses (ex.: 01/11 a 31/12)
+- Defina **Unidade 83**
+- Clique em **Atualizar**
+
+### 2) Lançar saldos no Excel/Planilha (base)
+Com o filtro de 2 meses:
+- Valor da carteira do mês 1
+- Valor da carteira do mês 2
+- Agregado/Perdido
+- Crescimento
+
+### 3) Conferir valores no gráfico (auditoria rápida)
+- Compare o valor exibido no gráfico para cada mês com os valores lançados na planilha.
+- Confirme também se **Agregado/Perdido** bate com **(mês2 - mês1)**.
+
+### 4) Ajustar filtro (1 mês) para detalhamento
+- Filtre apenas o mês que você vai detalhar (ex.: 01/12 a 31/12)
+- Clique em **Atualizar**
+
+### 5) Extrair Perdas do mês
+- Vá em **CS - Perdas MRR**
+- Abra a **Tabela de perdas reais**
+- Copie/extraia para o Excel/Planilha
+
+### 6) Extrair Ganhos do mês
+- Vá em **CS - Ganhos MRR**
+- Abra a **Tabela ganhos reais**
+- Copie/extraia para o Excel/Planilha
+
+---
+
+## ✅ Validações e checks (não pular)
+- **Check 1:** (Mês atual - mês anterior) = **Agregado/Perdido** (topo do dashboard).
+- **Check 2:** valor do gráfico (coluna do mês) = valor base lançado na planilha.
+- **Check 3 (fechamento):** após colar tabelas, compare **Ganhos** e **Perdas** do mês com a variação do comparativo.
+
+---
+
+## 📂 Estrutura do repositório
+- `index.html`  
+  Página do Fluxo MRR x Churn (passo a passo + exemplos + botão da planilha).
+- (opcional) `assets/`  
+  Imagens/prints utilizados no fluxo, se você decidir anexar.
+
+---
+
+## ▶️ Como rodar localmente
+
+### Opção A) Abrir direto no navegador
+Abra o `index.html` com duplo clique.
+
+### Opção B) Subir servidor local (recomendado)
 ```bash
-git clone https://github.com/germaninho/fluxo-mrr-x-churn-cscx-sankhya-abc-paulista.git
-cd fluxo-mrr-x-churn-cscx-sankhya-abc-paulista
-```
-
-3. Crie `index.html`, cole o conteúdo, e rode:
-
-```bash
-git add .
-git commit -m "Cria Fluxo MRR x Churn"
-git push
-```
-
----
-
-# 4) Conteúdo do Fluxo (o “processo” + link do Excel)
-
-Dentro do `index.html` do novo fluxo, você precisa ter:
-
-* **Título:** Fluxo MRR x Churn
-* **Objetivo do fluxo**
-* **Pré-requisitos** (Unidade, período, etc.)
-* **Passo a passo que você colou** (do item 1 ao 6)
-* **Link do Google Sheets** (o seu link)
-* (Opcional) seção “Validações” e “Erros comuns” (ex.: divergência por competência/classificação)
-
-✅ O link da planilha entra como botão tipo:
-
-* “Abrir planilha — MRR x Churn”
-
----
-
-# 5) Atualizar o Hub (apontar para o Fluxo, e não direto pra planilha)
-
-Hoje você colocou no Hub o link direto do Sheets. O correto no padrão “Fluxo” é:
-
-### No Hub, trocar para:
-
-```html
-<!-- ✅ NOVA ABA: Fluxo MRR x Churn -->
-<li>
-  <a class="nav-link"
-     href="https://germaninho.github.io/fluxo-mrr-x-churn-cscx-sankhya-abc-paulista/">
-    <i class="ion-arrow-graph-up-right"></i>
-    <span class="nav-text">Fluxo MRR x Churn</span>
-  </a>
-</li>
-```
-
-E **dentro** do novo fluxo (index.html do repo novo), você mantém o link da planilha.
-
----
-
-# 6) Checklist final (pra ficar “100% correto”)
-
-* [ ] Repo criado com nome padrão
-* [ ] Pages habilitado (main / root)
-* [ ] `index.html` publicado
-* [ ] Fluxo contém:
-
-  * [ ] Passo 1 a 6 (seu texto)
-  * [ ] Link do Sheets
-  * [ ] Regras de conferência (Dez–Nov etc.)
-* [ ] Hub aponta para o **GitHub Pages do fluxo**
-* [ ] Testar no navegador (Hub → Fluxo → Sheets)
-
----
-
-Se você quiser, eu já te devolvo **o `index.html` completo do Fluxo MRR x Churn** (bonitinho no mesmo padrão visual dos seus fluxos) com:
-
-* o texto do processo formatado,
-* botão “Abrir planilha — MRR x Churn”,
-* e uma seção “Checklist de amarração” (Ganhos – Perdas = variação da carteira).
-
-Só me diga: você quer esse fluxo com **layout simples (texto + botão)** ou com o **mesmo estilo “Hub” (sidebar/hero)**?
+python -m http.server 5500
